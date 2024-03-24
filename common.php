@@ -129,10 +129,10 @@ function getallheaders(){
             timeout 超时时间 单位秒 默认25秒 区间：1-360 （1-10分钟）
             getAllData 是否获取完整信息 默认 false 不获取 true 获取  返回详细数组
 
-        $return 返回值，一个索引数组[code（通过下标0获得）,msg（通过下标1获得）,data（通过下标2获得）]
-            code（通过下标0获得）  联网结果  1成功（此处仅代表网络连接成功，并不是业务层面成功，具体得获取到返回值在上层自行判断）  0失败
-            msg（通过下标0获得）   联网失败时的原因，成功时统一返回ok
-            data（通过下标0获得）  返回值内容
+        $return 返回值，一个索引数组[code（通过下标0获得），msg（通过下标1获得）联网结果描述，data（通过下标2获得）]
+            code（通过下标0获得）  联网结果 1 => 成功（此处仅代表网络连接成功，并不是业务层面成功，具体得获取到返回值在上层自行判断）  0 => 失败
+            msg（通过下标1获得）   联网结果描述，联网失败时的原因，成功时统一返回ok
+            data（通过下标2获得）  返回值内容
                                     若联网成功，受$getAllData参数影响，为false时为返回值字符串，为true时为数组
                                     若联网失败，统一为空数组
                                     $getAllData为true时返回值解释：
@@ -258,11 +258,7 @@ function requestNetworkV1($url, $method = 'GET', $parame = '', $requestHeader = 
         CURLINFO_HEADER_OUT => true,//是否要获取响应头，数据在curl_getinfo()里取
         CURLOPT_REFERER => '',//在HTTP请求头中"Referer: "的内容。
     ];
-    static $ch = NULL;//使用static保存curl句柄，防止循环、并发调用时内存暴涨
-    if ($ch === NULL){
-        $ch = curl_init();
-    }
-    curl_reset($ch);//重置一次设置，使每次调用都是全新句柄
+    $ch = curl_init();
     try {
         //组装请求体
         isset($requestHeader['Content-type']) ? : ($requestHeader['Content-type'] = 'multipart/form-data');
